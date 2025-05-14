@@ -25,3 +25,11 @@ module use /opt/apps/easybuild/systems/aion/rhel810-20250216/2023b/epyc/modules/
 ```
 module load devel/ReFrame
 ```
+
+```
+reframe --checkpath source.py --run
+```
+
+```
+reframe -C ../common/config.py -c source.py -r --system=aion:cpu -v
+```
