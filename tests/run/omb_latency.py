@@ -1,6 +1,7 @@
 import reframe as rfm, reframe.utility.sanity as sn
-from run_helper import _binary_path
-import os, pathlib
+import os
+from omb_generic_build import OMB_GenericBuild
+from omb_easybuild_build import OMB_EasyBuild
 
 
 class OMB_EasyBuild(rfm.CompileOnlyRegressionTest):
@@ -100,11 +101,9 @@ class OMB_Latency(rfm.RunOnlyRegressionTest):
         else:
             self.num_tasks_per_node = self.num_tasks
             self.exclusive_access = True
-            bind = {
-                "intra_numa": "map_cpu:0,1",
-                "cross_numa": "map_cpu:0,16",
-                "cross_socket": "map_cpu:0,64",
-            }[self.placing]
+            config = self.current_system.json()
+            bindings = dict(config["env_vars"])
+            bind = bindings[self.placing]
             self.job.options = ["--nodes=1"]
             self.job.launcher.options = [f"--cpu-bind={bind}"]
 
@@ -127,7 +126,12 @@ class OMB_Latency(rfm.RunOnlyRegressionTest):
         if self.flavour == "eessi":
             self.modules = ["EESSI", "OSU-Micro-Benchmarks/7.2-gompi-2023b"]
             self.executable = self.metric
-        self.executable_opts = ["-x", "3", "-i", "10", "-m", str(self.message_size)]
+        # when using "-x" "-i" parameter in iris with easybuild, it because of the compatibility of ABI
+        self.executable_opts = (
+            [str(self.message_size)]
+            if self.current_system.name == "iris" and self.flavour == "easybuild"
+            else ["-x", "3", "-i", "10", "-m", str(self.message_size)]
+        )
 
     @run_after("run")
     def set_sanity(self):

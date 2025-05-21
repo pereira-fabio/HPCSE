@@ -1,6 +1,5 @@
-import os, pathlib
+import os
 import reframe as rfm
-import reframe.utility.typecheck as typ
 import reframe.utility.sanity as sn
 
 
@@ -18,12 +17,11 @@ class fetch_osu_benchmarks(rfm.RunOnlyRegressionTest):
         return sn.assert_eq(self.job.exitcode, 0)
 
 
-@rfm.simple_test
 class OMB_GenericBuild(rfm.CompileOnlyRegressionTest):
     descr = "Build OMB benchmarks"
     valid_systems = ["iris:batch", "aion:batch"]
     build_system = "Autotools"
-    valid_prog_environs = ["system-gcc"]
+    valid_prog_environs = ["foss"]
     build_prefix = variable(str)
     osu_benchmarks = fixture(fetch_osu_benchmarks, scope="session")
 
@@ -40,14 +38,3 @@ class OMB_GenericBuild(rfm.CompileOnlyRegressionTest):
             f"cd {self.build_prefix}",
         ]
         self.build_system.max_concurrency = 8
-        _p = os.path.join(
-            self.stagedir, self.build_prefix, "c", "mpi", "pt2pt/standard"
-        )
-
-        self.postbuild_cmds = [f'echo "{_p}" > omb.path', "echo 'hello world'"]
-
-    @run_after("compile")
-    def validate_compile(self):
-        path_file = pathlib.Path(self.stagedir) / "omb.path"
-
-        return sn.assert_found(r"mpi", str(path_file))

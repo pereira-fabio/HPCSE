@@ -19,6 +19,11 @@ site_configuration = {
                     "descr": "Aion regular CPU",
                 },
             ],
+            "env_vars": [
+                ["intra_numa", "map_cpu:0,1"],
+                ["cross_numa", "map_cpu:0,16"],
+                ["cross_socket", "map_cpu:0,64"],
+            ],
         },
         # ------------------------------------------------------------------
         # IRIS
@@ -38,6 +43,11 @@ site_configuration = {
                     "descr": "Iris regular CPU",
                 },
             ],
+            "env_vars": [
+                ["intra_numa", "map_cpu:0,1"],
+                ["cross_numa", "map_cpu:0,14"],
+                ["cross_socket", "map_cpu:0,14"],
+            ],
         },
     ],
     # ----------------------------------------------------------------------
@@ -50,14 +60,14 @@ site_configuration = {
             "cxx": "mpicxx",
             "cc": "mpicc",
             "ftn": "gfortran",
-            "target_systems": ["aion"],
+            "target_systems": ["aion", "iris"],
         },
         {
             "name": "system-gcc",
             "cc": "gcc",
             "cxx": "g++",
             "ftn": "gfortran",
-            "target_systems": ["aion"],
+            "target_systems": ["aion", "iris"],
         },
     ],
 }
