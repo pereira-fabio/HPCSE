@@ -1,1 +1,0 @@
--reframe: command `make -j 1 CC="cc" CXX="CC" FC="ftn" NVCC="nvcc"' failed (exit code: 2)
